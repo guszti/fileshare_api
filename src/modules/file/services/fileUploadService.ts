@@ -5,6 +5,10 @@ export const AVAILABLE_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg"];
 
 export const MAX_FILE_SIZE = 3000000;
 
+export const FILES_PATH = `${path.dirname(
+    require.main.path
+)}/static/stored-files`;
+
 const makeTimeString = () => {
     const currentDate = new Date();
 
@@ -17,8 +21,7 @@ export const processFile = (file: UploadedFile) => {
     const originalFileName = fileNameArray.join(".");
     const fileName = `${originalFileName}_${makeTimeString()}.${fileExtension}`;
 
-    const projectPath = path.dirname(require.main.path);
-    const filePath = `${projectPath}/static/stored-files/${fileName}`;
+    const filePath = `${FILES_PATH}/${fileName}`;
 
     file.mv(filePath, (error) => {
         if (error) {

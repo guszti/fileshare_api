@@ -6,6 +6,7 @@ import {
     makePasswordHash,
 } from "../services/passwordService";
 import { CustomError } from "../../../common/errors/CustomError";
+import { validationResult } from "express-validator";
 
 interface AuthController {
     signUp: Handler;
@@ -15,6 +16,14 @@ interface AuthController {
 
 const authController: AuthController = {
     signUp: async (req, res, next) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return next(
+                new CustomError(400, "Validation failed.", errors.array())
+            );
+        }
+
         const { username, password } = req.body;
 
         const passwordHash = await makePasswordHash(password);
@@ -39,6 +48,14 @@ const authController: AuthController = {
     },
 
     signIn: async (req, res, next) => {
+        const errors = validationResult(req);
+
+        if (!errors.isEmpty()) {
+            return next(
+                new CustomError(400, "Validation failed.", errors.array())
+            );
+        }
+
         const { username, password } = req.body;
 
         const user = await User.findOne({ username }).exec();
@@ -60,7 +77,7 @@ const authController: AuthController = {
 
     signOut: (req, res) => {
         res.clearCookie("jwt");
-        
+
         res.status(200).send();
     },
 };

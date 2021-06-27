@@ -23,6 +23,7 @@ const fileSchema = new mongoose.Schema<FileDocument>({
     },
     archivedAt: {
         type: Date,
+        default: null,
     },
 });
 

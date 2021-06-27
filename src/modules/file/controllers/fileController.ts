@@ -2,29 +2,46 @@ import { Handler } from "express";
 import { UploadedFile } from "express-fileupload";
 import {
     AVAILABLE_MIME_TYPES,
+    FILES_PATH,
     MAX_FILE_SIZE,
     processFile,
 } from "../services/fileUploadService";
 import { CustomError } from "../../../common/errors/CustomError";
+import { File } from "../models/File";
 
 export interface FileController {
     getAll: Handler;
-    getOne: Handler;
+    downloadFile: Handler;
     handleUpload: Handler;
     saveFile: Handler;
     deleteOne: Handler;
 }
 
 export const fileController: FileController = {
-    getAll: () => {
-        // TODO
-        //  just get all the files where archivedAt is null
+    getAll: async (req, res) => {
+        const files = await File.find({ archivedAt: null }).exec();
+
+        return res.status(200).json(files);
     },
 
-    getOne: () => {
-        // TODO
-        //  check archivedAt
-        //  stream the file
+    downloadFile: async (req, res, next) => {
+        try {
+            const file = await File.findById(req.params.id).exec();
+
+            if (!file) {
+                return next(new CustomError(400, "File not found."));
+            }
+
+            if (!!file.archivedAt) {
+                return next(new CustomError(400, "File was removed."));
+            }
+
+            const storedFile = `${FILES_PATH}/${file.name}`;
+
+            res.download(storedFile);
+        } catch (e) {
+            return next(new CustomError(500, e.message));
+        }
     },
 
     handleUpload: async (req, res, next) => {
@@ -50,17 +67,32 @@ export const fileController: FileController = {
         }
     },
 
-    saveFile: () => {
-        // TODO
-        //  check if file exists
-        //  create doc
-        //  save
+    saveFile: async (req, res, next) => {
+        const file = new File({ name: req.body.name, user: req.user.id });
+
+        try {
+            const fileDoc = await file.save();
+
+            res.status(201).json(fileDoc);
+        } catch (e) {
+            next(new CustomError(500, e.message));
+        }
     },
 
-    deleteOne: () => {
-        // TODO
-        //  find file
-        //  check if user is the current user
-        //  set archivedAt to new Date()
+    deleteOne: async (req, res, next) => {
+        const file = await File.findById(req.params.id).exec();
+
+        if (file.user._id === req.user.id) {
+            next(new CustomError(403, "Cannot delete other user's files."));
+        }
+
+        try {
+            file.archivedAt = new Date();
+            await file.save();
+
+            res.status(204).send();
+        } catch (e) {
+            next(new CustomError(500, e.message));
+        }
     },
 };

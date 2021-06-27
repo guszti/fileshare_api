@@ -6,13 +6,12 @@ const router = Router();
 
 router.get("/", fileController.getAll);
 
-router.get("/:id", fileController.getOne);
+router.get("/:id", fileController.downloadFile);
 
 router.post("/upload", jwtGuard, fileController.handleUpload);
 
 router.post("/save", jwtGuard, fileController.saveFile);
 
-// TODO check if creator is the current user
-router.delete("/", jwtGuard, fileController.deleteOne);
+router.delete("/:id", jwtGuard, fileController.deleteOne);
 
 export { router };
