@@ -5,10 +5,7 @@ interface UserDocument {
     passwordHash: string;
 }
 
-const userSchema = new mongoose.Schema<{
-    username: string;
-    passwordHash: string;
-}>({
+const userSchema = new mongoose.Schema<UserDocument>({
     username: {
         type: String,
         required: true,

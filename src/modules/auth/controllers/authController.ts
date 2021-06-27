@@ -1,5 +1,5 @@
 import { Handler } from "express";
-import { User } from "../models/user";
+import { User } from "../models/User";
 import { createJwtToken, tokenExpiration } from "../services/jwtService";
 import {
     comparePasswords,

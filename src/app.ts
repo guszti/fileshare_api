@@ -5,19 +5,20 @@ import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import fileUpload from "express-fileupload";
 //
 import { router as fileRouter } from "./modules/file/routes/file";
 import { router as authRouter } from "./modules/auth/routes/auth";
-import { jwtGuard } from "./modules/auth/middlewares/jwtGuard";
 import { errorMiddleware } from "./common/middlewares/errorMiddleware";
 
 const app = express();
 
 app.use(bodyParser.json());
 app.use(cookieParser());
+app.use(fileUpload());
 
 app.use("/auth", authRouter);
-app.use("/files", jwtGuard, fileRouter);
+app.use("/files", fileRouter);
 
 app.use(errorMiddleware);
 
