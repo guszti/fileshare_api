@@ -1,17 +1,28 @@
 import * as dotenv from "dotenv";
 dotenv.config();
-
+//
 import express from "express";
 import mongoose from "mongoose";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+//
+import { router as fileRouter } from "./modules/file/routes/file";
+import { router as authRouter } from "./modules/auth/routes/auth";
+import { jwtGuard } from "./modules/auth/middlewares/jwtGuard";
+import { errorMiddleware } from "./common/middlewares/errorMiddleware";
 
 const app = express();
 
-// TODO
-//  error middleware
+app.use(bodyParser.json());
+app.use(cookieParser());
+
+app.use("/auth", authRouter);
+app.use("/files", jwtGuard, fileRouter);
+
+app.use(errorMiddleware);
 
 const start = async () => {
     try {
-        console.log(process.env.DB_URL)
         await mongoose.connect(process.env.DB_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
