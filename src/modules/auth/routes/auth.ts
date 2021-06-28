@@ -14,4 +14,6 @@ router.post("/sign-in", ...SIGN_IN_VALIDATOR, authController.signIn);
 
 router.post("/sign-out", jwtGuard, authController.signOut);
 
+router.get("/logged-in-user", jwtGuard, authController.loggedInUser);
+
 export { router };

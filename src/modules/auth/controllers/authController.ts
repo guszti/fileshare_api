@@ -12,6 +12,7 @@ interface AuthController {
     signUp: Handler;
     signIn: Handler;
     signOut: Handler;
+    loggedInUser: Handler;
 }
 
 const authController: AuthController = {
@@ -72,13 +73,29 @@ const authController: AuthController = {
             expires: tokenExpiration,
         });
 
-        res.status(200).send();
+        res.status(200).json(user);
     },
 
     signOut: (req, res) => {
         res.clearCookie("jwt");
 
         res.status(200).send();
+    },
+
+    loggedInUser: async (req, res, next) => {
+        try {
+            const user = await User.findById(req.user.id);
+
+            if (!user) {
+                res.clearCookie("jwt");
+
+                return res.status(401).send();
+            }
+
+            return res.status(200).json(user);
+        } catch (e) {
+            return next(new CustomError(500, e.message));
+        }
     },
 };
 

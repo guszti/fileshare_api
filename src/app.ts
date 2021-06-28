@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import fileUpload from "express-fileupload";
+import cors from "cors";
 //
 import { router as fileRouter } from "./modules/file/routes/file";
 import { router as authRouter } from "./modules/auth/routes/auth";
@@ -13,6 +14,7 @@ import { errorMiddleware } from "./common/middlewares/errorMiddleware";
 
 const app = express();
 
+app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(fileUpload());

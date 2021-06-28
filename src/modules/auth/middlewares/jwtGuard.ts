@@ -14,7 +14,7 @@ export const jwtGuard = (req: Request, res: Response, next: NextFunction) => {
     try {
         req.user = validateJwtToken(req.cookies["jwt"]) as JwtPayload;
     } catch (e) {
-        return next(new CustomError(400, e.message));
+        return next(new CustomError(401, e.message));
     }
 
     next();

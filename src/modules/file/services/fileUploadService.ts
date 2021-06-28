@@ -1,7 +1,12 @@
 import * as path from "path";
 import { UploadedFile } from "express-fileupload";
 
-export const AVAILABLE_MIME_TYPES = ["image/png", "image/jpeg", "image/jpg"];
+export const AVAILABLE_MIME_TYPES = [
+    "image/png",
+    "image/jpeg",
+    "image/jpg",
+    "application/pdf",
+];
 
 export const MAX_FILE_SIZE = 3000000;
 

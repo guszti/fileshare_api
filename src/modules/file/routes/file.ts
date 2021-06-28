@@ -6,7 +6,7 @@ const router = Router();
 
 router.get("/", fileController.getAll);
 
-router.get("/:id", fileController.downloadFile);
+router.get("/download/:id", fileController.downloadFile);
 
 router.post("/upload", jwtGuard, fileController.handleUpload);
 

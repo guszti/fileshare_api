@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { isUsernameUnique } from "../../../common/validators/isUsernameUnique";
+import { isUsernameUnique } from "../validators/isUsernameUnique";
 
 export const SIGN_UP_VALIDATOR = [
     body("username").isLength({ min: 3, max: 30 }).custom(isUsernameUnique),

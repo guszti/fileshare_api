@@ -45,6 +45,10 @@ export const fileController: FileController = {
     },
 
     handleUpload: async (req, res, next) => {
+        if (!req.files?.userFile) {
+            return next(new CustomError(400, "Failed to upload file."));
+        }
+
         const { size, mimetype } = req.files.userFile as UploadedFile;
 
         const isTooLarge = size > MAX_FILE_SIZE;
@@ -82,7 +86,7 @@ export const fileController: FileController = {
     deleteOne: async (req, res, next) => {
         const file = await File.findById(req.params.id).exec();
 
-        if (file.user._id === req.user.id) {
+        if (file.user.toString() === req.user.id) {
             next(new CustomError(403, "Cannot delete other user's files."));
         }
 

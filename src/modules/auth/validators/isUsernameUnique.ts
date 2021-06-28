@@ -1,5 +1,4 @@
-import { body, CustomValidator } from "express-validator";
-import { User } from "../../modules/auth/models/User";
+import { User } from "../models/User";
 
 export const isUsernameUnique = (username: string) => {
     return User.findOne({ username }).then((user) => {
