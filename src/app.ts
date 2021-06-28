@@ -40,15 +40,3 @@ const start = async () => {
 };
 
 start();
-
-// TODO
-//  Lists all the available/uploaded files (file name, date and time of upload)
-//  Provides an option to retrieve sharable file link for the specific images
-//  Provides file upload capability to the users. Files should not be bigger than 3MB.
-/*************************************************************************************/
-// TODO
-//  Users can authenticate
-//  Show user name on frontend
-//  Only authenticated user can upload files
-//  The user who uploaded the file can delete it
-//  Store the files in the cloud (e.g.: AWS S3, free tier is available for anybody at most cloud providers)
