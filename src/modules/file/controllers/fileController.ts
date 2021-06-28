@@ -19,7 +19,10 @@ export interface FileController {
 
 export const fileController: FileController = {
     getAll: async (req, res) => {
-        const files = await File.find({ archivedAt: null }).exec();
+        const files = await File.find({ archivedAt: null })
+            .populate("user", ["username"])
+            .sort({createdAt: -1})
+            .exec();
 
         return res.status(200).json(files);
     },

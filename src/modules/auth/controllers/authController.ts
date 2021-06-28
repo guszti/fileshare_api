@@ -32,20 +32,20 @@ const authController: AuthController = {
         const user = new User({ username, passwordHash });
 
         try {
-            await user.save();
+            const { _id, username } = await user.save();
+
+            const jwt = createJwtToken({ username, id: user._id });
+
+            res.cookie("jwt", jwt, {
+                secure: false,
+                httpOnly: true,
+                expires: tokenExpiration,
+            });
+
+            res.status(201).json({ _id, username });
         } catch (e) {
             return next(new CustomError(500, e.message));
         }
-
-        const jwt = createJwtToken({ username, id: user._id });
-
-        res.cookie("jwt", jwt, {
-            secure: false,
-            httpOnly: true,
-            expires: tokenExpiration,
-        });
-
-        res.status(201).send();
     },
 
     signIn: async (req, res, next) => {
@@ -73,7 +73,7 @@ const authController: AuthController = {
             expires: tokenExpiration,
         });
 
-        res.status(200).json(user);
+        res.status(200).json({ username: user.username, _id: user._id });
     },
 
     signOut: (req, res) => {
