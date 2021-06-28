@@ -8,6 +8,8 @@ router.get("/", fileController.getAll);
 
 router.get("/download/:id", fileController.downloadFile);
 
+router.get("/:id", fileController.getOne);
+
 router.post("/upload", jwtGuard, fileController.handleUpload);
 
 router.post("/save", jwtGuard, fileController.saveFile);

@@ -15,13 +15,14 @@ export interface FileController {
     handleUpload: Handler;
     saveFile: Handler;
     deleteOne: Handler;
+    getOne: Handler;
 }
 
 export const fileController: FileController = {
     getAll: async (req, res) => {
         const files = await File.find({ archivedAt: null })
             .populate("user", ["username"])
-            .sort({createdAt: -1})
+            .sort({ createdAt: -1 })
             .exec();
 
         return res.status(200).json(files);
@@ -87,19 +88,31 @@ export const fileController: FileController = {
     },
 
     deleteOne: async (req, res, next) => {
-        const file = await File.findById(req.params.id).exec();
-
-        if (file.user.toString() === req.user.id) {
-            next(new CustomError(403, "Cannot delete other user's files."));
-        }
-
         try {
+            const file = await File.findById(req.params.id).exec();
+
+            if (file.user.toString() !== req.user.id) {
+                return next(
+                    new CustomError(403, "Cannot delete other user's files.")
+                );
+            }
+
             file.archivedAt = new Date();
             await file.save();
 
             res.status(204).send();
         } catch (e) {
             next(new CustomError(500, e.message));
+        }
+    },
+
+    getOne: async (req, res, next) => {
+        try {
+            const file = await File.findById(req.params.id, ["name"]).exec();
+
+            res.status(200).json(file);
+        } catch (e) {
+            next(new CustomError(400, "File not found."));
         }
     },
 };
